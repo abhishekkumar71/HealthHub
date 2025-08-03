@@ -268,8 +268,14 @@ app.post("/login", async (req, res) => {
 });
 
 app.listen(8080, () => {
-  mongoose.connect(db_url).then(() => {
-    console.log("DB connected");
-  });
+  mongoose.connect(process.env.MONGO_URL, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  ssl: true, 
+  tlsAllowInvalidCertificates: true, 
+})
+.then(() => console.log("MongoDB connected"))
+.catch((err) => console.error("MongoDB connection error:", err));
+
   console.log("listening to port: 8080");
 });
