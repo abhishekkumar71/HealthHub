@@ -3,7 +3,7 @@ import axios from "axios";
 import { Box, Typography, Button, CircularProgress } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import SessionCard from "../components/SessionCardsd";
-import Sidebar from "../components/sideeeBar";
+import Sidebar from "../components/SideBar";
 import { useSnackbar } from "notistack";
 import { SentimentDissatisfied } from "@mui/icons-material";
 
