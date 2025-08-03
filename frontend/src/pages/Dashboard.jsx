@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Box, Typography, Button, CircularProgress } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import SessionCard from "../components/SessionCard";
-import Sidebar from "../components/Sidebar";
+import SessionCard from "../components/SessionCardsd";
+import Sidebar from "../components/sideeeBar";
 import { useSnackbar } from "notistack";
 import { SentimentDissatisfied } from "@mui/icons-material";
 

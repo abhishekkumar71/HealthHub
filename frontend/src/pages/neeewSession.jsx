@@ -1,5 +1,5 @@
 import React from "react";
-import SessionForm from "../components/sessionForm";
+import SessionForm from "../components/sessidcfvonForm";
 import { Typography, Box } from "@mui/material";
 
 const NewSession = () => {

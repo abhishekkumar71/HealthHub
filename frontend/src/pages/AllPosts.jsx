@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import SessionCard from "../components/SessionCard";
+import SessionCard from "../components/SessionCardsd";
 import { CircularProgress } from "@mui/material";
 import SentimentDissatisfiedIcon from "@mui/icons-material/SentimentDissatisfied";
 

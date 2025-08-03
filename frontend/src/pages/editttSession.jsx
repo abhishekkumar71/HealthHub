@@ -1,7 +1,7 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 
-import SessionForm from "../components/sessionForm";
+import SessionForm from "../components/sessidcfvonForm";
 
 const EditSession = () => {
   const { id } = useParams();
