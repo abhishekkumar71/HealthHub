@@ -3,13 +3,13 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import axios from "axios";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
-import LandingPage from "./pages/landingPage";
+import LandingPage from "./pages/LandingPage";
 import AuthModal from "./pages/Authenthication";
 import Dashboard from "./pages/Dashboard";
-import NewSession from "./pages/newSession"; 
-import EditSession from "./pages/editSession";
+import NewSession from "./pages/NewSession"; 
+import EditSession from "./pages/EditSession";
 import AllPosts from "./pages/AllPosts";
-import SessionDetails from "./pages/sessionDetails";
+import SessionDetails from "./pages/SessionDetails";
 import { SnackbarProvider } from "notistack";
 import "./styles/App.css";
 
