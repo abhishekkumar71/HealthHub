@@ -68,7 +68,7 @@ const navigate=useNavigate();
     if (!validateFields()) return;
 
     try {
-      const url = `http://localhost:8080/${isLogin ? "login" : "register"}`;
+      const url = `https://healthhub-backend-sldu.onrender.com/${isLogin ? "login" : "register"}`;
       const payload = isLogin
         ? { email, password }
         : { name, email, password };

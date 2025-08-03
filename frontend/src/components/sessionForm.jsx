@@ -79,11 +79,11 @@ const SessionForm = ({ sessionId = null, isEdit = false }) => {
 
       let res;
       if (isEdit) {
-        res = await axios.put(`http://localhost:8080/edit/${sessionId}`, payload, {
+        res = await axios.put(`https://healthhub-backend-sldu.onrender.com/edit/${sessionId}`, payload, {
           withCredentials: true,
         });
       } else {
-        res = await axios.post("http://localhost:8080/newsession", payload, {
+        res = await axios.post("https://healthhub-backend-sldu.onrender.com/newsession", payload, {
           withCredentials: true,
         });
 

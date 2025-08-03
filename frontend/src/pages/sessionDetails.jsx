@@ -20,7 +20,7 @@ const SessionDetails = () => {
   useEffect(() => {
     const fetchSession = async () => {
       try {
-        const res = await axios.get(`http://localhost:8080/session/${id}`);
+        const res = await axios.get(`https://healthhub-backend-sldu.onrender.com/session/${id}`);
         if (res.data.success) {
           setSession(res.data.session);
         }

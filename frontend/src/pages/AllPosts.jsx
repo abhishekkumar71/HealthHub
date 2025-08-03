@@ -11,7 +11,7 @@ const AllPosts = () => {
   useEffect(() => {
     const fetchAllSessions = async () => {
       try {
-        const res = await axios.get("http://localhost:8080/all-posts");
+        const res = await axios.get("https://healthhub-backend-sldu.onrender.com/all-posts");
         if (res.data.success) {
           setSessions(res.data.sessions);
         } else {
