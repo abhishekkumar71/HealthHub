@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Navbar from "./components/navbar";
-import Footer from "./components/footer";
+import Navbar from "./components/Navbarxxx";
+import Footer from "./components/Footerxxx";
 import LandingPage from "./pages/landingPage";
 import AuthModal from "./pages/Authenthication";
 import Dashboard from "./pages/Dashboard";
