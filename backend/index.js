@@ -15,7 +15,7 @@ const { verifyUser } = require("./src/utils/Authentication");
 const user = require("./src/models/UserModel");
 app.use(
   cors({
-    origin: ["http://localhost:5173"],
+    origin: ["https://healthhub-ud5p.onrender.com"],
     methods: ["GET", "POST", "DELETE", "PUT"],
     credentials: true,
   })
