@@ -1,0 +1,42 @@
+[
+  {
+    "title": "Morning Yoga Routine",
+    "tags": ["yoga", "morning", "stretch"],
+    "status": "published",
+    "jsonUrl": "https://example.com/sessions/yoga-morning.json",
+    "userId": "64e9b0a3b5e5d2a1f7c4d7c1",
+    "updatedAt": "2025-08-01T07:00:00.000Z"
+  },
+  {
+    "title": "Mindful Breathing Practice",
+    "tags": ["mindfulness", "breath", "meditation"],
+    "status": "published",
+    "jsonUrl": "https://example.com/sessions/breathing.json",
+    "userId": "64e9b0a3b5e5d2a1f7c4d7c2",
+    "updatedAt": "2025-08-01T10:30:00.000Z"
+  },
+  {
+    "title": "Sleep Preparation Ritual",
+    "tags": ["sleep", "calm", "evening"],
+    "status": "published",
+    "jsonUrl": "https://example.com/sessions/sleep.json",
+    "userId": "64e9b0a3b5e5d2a1f7c4d7c3",
+    "updatedAt": "2025-08-01T22:00:00.000Z"
+  },
+  {
+    "title": "5-Minute Desk Stretches",
+    "tags": ["stretch", "desk", "work"],
+    "status": "published",
+    "jsonUrl": "https://example.com/sessions/desk-stretch.json",
+    "userId": "64e9b0a3b5e5d2a1f7c4d7c4",
+    "updatedAt": "2025-08-02T14:45:00.000Z"
+  },
+  {
+    "title": "Gratitude Journaling",
+    "tags": ["gratitude", "journaling", "reflection"],
+    "status": "published",
+    "jsonUrl": "https://example.com/sessions/gratitude.json",
+    "userId": "64e9b0a3b5e5d2a1f7c4d7c5",
+    "updatedAt": "2025-08-02T20:15:00.000Z"
+  }
+]
