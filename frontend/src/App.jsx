@@ -6,7 +6,7 @@ import Footer from "./components/Footer";
 import LandingPage from "./pages/LandingPage";
 import AuthModal from "./pages/Authenthication";
 import Dashboard from "./pages/Dashboard";
-import NewSession from "./pages/NewSession"; 
+import NewSession from "./pages/NewSession";
 import EditSession from "./pages/EditSession";
 import AllPosts from "./pages/AllPosts";
 import SessionDetails from "./pages/SessionDetails";
@@ -20,14 +20,17 @@ function App() {
   const [authMode, setAuthMode] = useState("login");
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const API_BASE_URL = import.meta.env.DEV
+    ? ""
+    : "https://healthhub-backend-sldu.onrender.com";
+useEffect(() => {
+  axios
+    .get(`${API_BASE_URL}/me`)
+    .then((res) => setUser(res.data.user))
+    .catch(() => setUser(null))
+    .finally(() => setLoading(false));
+}, []);
 
-  useEffect(() => {
-    axios
-      .get("/api/me")
-      .then((res) => setUser(res.data))
-      .catch(() => setUser(null))
-      .finally(() => setLoading(false));
-  }, []);
 
   const Protected = ({ children }) => {
     if (loading) return <div>Loading...</div>;
@@ -39,10 +42,25 @@ function App() {
     <SnackbarProvider maxSnack={1}>
       <div className="layout">
         <BrowserRouter>
-          <Navbar setAuthOpen={setAuthOpen} setAuthMode={setAuthMode} />
+          <Navbar
+            setAuthOpen={setAuthOpen}
+            setAuthMode={setAuthMode}
+            user={user}
+            setUser={setUser}
+          />
           <div className="pageContent">
             <Routes>
-              <Route path="/" element={<LandingPage />} />
+              <Route
+                path="/"
+                element={
+                  <LandingPage
+                    user={user}
+                    setAuthOpen={setAuthOpen}
+                    setAuthMode={setAuthMode}
+                  />
+                }
+              />
+
               <Route path="/sessions/:id" element={<SessionDetails />} />
               <Route path="/explore" element={<AllPosts />} />
 
@@ -85,9 +103,9 @@ function App() {
               mode={authMode}
               setMode={setAuthMode}
               onClose={() => setAuthOpen(false)}
-              onSuccess={() => {
+              onSuccess={(user) => {
+                setUser(user);
                 setAuthOpen(false);
-                window.location.reload();
               }}
             />
           )}

@@ -1,7 +1,7 @@
 import { Button, Container, Typography, Box } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
-export default function HeroSection() {
+export default function HeroSection({ user, setAuthOpen, setAuthMode }) {
   const navigate = useNavigate();
 
   return (
@@ -13,7 +13,20 @@ export default function HeroSection() {
         <Typography variant="h6" color="text.secondary" mb={4}>
           Track your wellness, share sessions, and grow your inner peace.
         </Typography>
-        <Button variant="contained" size="large" sx={{ backgroundColor: "#075b07" }} onClick={()=>navigate("/dashboard")}>
+        <Button
+          variant="contained"
+          size="large"
+          sx={{ backgroundColor: "#075b07" }}
+          onClick={() => {
+            if (user) {
+              console.log(user);
+              navigate("/dashboard");
+            } else {
+              setAuthMode("login");
+              setAuthOpen(true);
+            }
+          }}
+        >
           Get Started
         </Button>
       </Container>

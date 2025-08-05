@@ -34,29 +34,19 @@ HideOnScroll.propTypes = {
   window: PropTypes.func,
 };
 
-export default function Navbar({ setAuthOpen, setAuthMode }) {
+export default function Navbar({ setAuthOpen, setAuthMode, user, setUser }) {
   const location = useLocation();
   const navigate = useNavigate();
   const [anchorElNav, setAnchorElNav] = React.useState(null);
-  const [user, setUser] = React.useState(null);
 
-  React.useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const res = await axios.get("/me", { withCredentials: true });
-        if (res.data?.user) {
-          setUser(res.data.user);
-        }
-      } catch (e) {
-        setUser(null);
-      }
-    };
-    fetchUser();
-  }, []);
+  
+  const API_BASE_URL = import.meta.env.DEV
+    ? ""
+    : "https://healthhub-backend-sldu.onrender.com";
 
   const handleLogout = async () => {
     try {
-      await axios.get("/logout", { withCredentials: true });
+      await axios.get(`${API_BASE_URL}/logout`, { withCredentials: true });
       setUser(null);
       navigate("/");
     } catch (e) {
@@ -76,8 +66,23 @@ export default function Navbar({ setAuthOpen, setAuthMode }) {
   );
 
   const navLinks = [
-    { name: "Explore", path: "/explore" },
-    { name: "Dashboard", path: "/dashboard" },
+    {
+      name: "Explore",
+      action: () => {
+        navigate("/explore");
+      },
+    },
+    {
+      name: "Dashboard",
+      action: () => {
+        if (user) {
+          navigate("/dashboard");
+        } else {
+          setAuthMode("login");
+          setAuthOpen(true);
+        }
+      },
+    },
   ];
 
   return (
@@ -106,15 +111,15 @@ export default function Navbar({ setAuthOpen, setAuthMode }) {
                 onClose={handleCloseNavMenu}
               >
                 {navLinks.map((link) => (
-                  <MenuItem key={link.name} onClick={handleCloseNavMenu}>
-                    <Link
-                      to={link.path}
-                      style={{ textDecoration: "none", color: "inherit" }}
-                    >
-                      <Typography>{link.name}</Typography>
-                    </Link>
-                  </MenuItem>
+                  <Button
+                    key={link.name}
+                    onClick={link.action}
+                    sx={{ color: "white", textTransform: "none" }}
+                  >
+                    {link.name}
+                  </Button>
                 ))}
+
                 {!user &&
                   !hideAuthLinks && [
                     <MenuItem
@@ -130,7 +135,6 @@ export default function Navbar({ setAuthOpen, setAuthMode }) {
                     <MenuItem
                       key="register"
                       onClick={() => {
-                        console.log("clickedd");
                         setAuthOpen(true);
                         setAuthMode("register");
                         handleCloseNavMenu();
@@ -150,16 +154,15 @@ export default function Navbar({ setAuthOpen, setAuthMode }) {
 
             <Box sx={{ display: { xs: "none", md: "flex" }, gap: 2 }}>
               {navLinks.map((link) => (
-                <Link
+                <Button
                   key={link.name}
-                  to={link.path}
-                  style={{ textDecoration: "none" }}
+                  onClick={link.action}
+                  sx={{ color: "white", textTransform: "none" }}
                 >
-                  <Button sx={{ color: "white", textTransform: "none" }}>
-                    {link.name}
-                  </Button>
-                </Link>
+                  {link.name}
+                </Button>
               ))}
+
               {!user && !hideAuthLinks && (
                 <>
                   <Button

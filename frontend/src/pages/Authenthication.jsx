@@ -16,16 +16,14 @@ import CloseIcon from "@mui/icons-material/Close";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { useNavigate } from "react-router-dom";
-export default function AuthModal({ open, setOpen, mode, setMode }) {
+export default function AuthModal({ open, setOpen, mode, setMode, onSuccess }) {
   const isLogin = mode === "login";
-const navigate=useNavigate();
-  // Form Fields
+  const navigate = useNavigate();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  // Field Validations
   const [errors, setErrors] = useState({});
   const [serverError, setServerError] = useState(null);
   const [serverSuccess, setServerSuccess] = useState(null);
@@ -68,10 +66,10 @@ const navigate=useNavigate();
     if (!validateFields()) return;
 
     try {
-      const url = `https://healthhub-backend-sldu.onrender.com/${isLogin ? "login" : "register"}`;
-      const payload = isLogin
-        ? { email, password }
-        : { name, email, password };
+      const url = `https://healthhub-backend-sldu.onrender.com/${
+        isLogin ? "login" : "register"
+      }`;
+      const payload = isLogin ? { email, password } : { name, email, password };
 
       const { data } = await axios.post(url, payload, {
         withCredentials: true,
@@ -80,6 +78,13 @@ const navigate=useNavigate();
       const { success, message } = data;
       if (success) {
         setServerSuccess(message);
+        const me = await axios.get(
+          "https://healthhub-backend-sldu.onrender.com/me",
+          {
+            withCredentials: true,
+          }
+        );
+        onSuccess?.(me.data);
       } else {
         setServerError(message);
       }

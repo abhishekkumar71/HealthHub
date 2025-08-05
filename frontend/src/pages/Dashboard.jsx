@@ -13,29 +13,35 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
+  const API_BASE_URL = import.meta.env.DEV
+    ? ""
+    : "https://healthhub-backend-sldu.onrender.com";
 
   useEffect(() => {
     const fetchSessions = async () => {
       try {
-        const res1 = await axios.get("/me", { withCredentials: true });
+        const res1 = await axios.get(`${API_BASE_URL}/me`, {
+          withCredentials: true,
+        });
         console.log("res1.data", res1.data);
 
         const userId = res1.data._id;
 
-        const res2 = await axios.get("/my-sessions", {
+        const res2 = await axios.get(`${API_BASE_URL}/my-sessions`, {
           withCredentials: true,
         });
         if (res2.data.success) {
-          
           setSessions(res2.data.sessions);
         }
 
-        const res3 = await axios.get("/drafts", { withCredentials: true });
+        const res3 = await axios.get(`${API_BASE_URL}/drafts`, {
+          withCredentials: true,
+        });
         if (res3.data.success) {
           setDrafts(res3.data.sessions);
         }
       } catch (err) {
-        console.log(err)
+        console.log(err);
         enqueueSnackbar("Failed to load sessions", { variant: "error" });
       } finally {
         setLoading(false);

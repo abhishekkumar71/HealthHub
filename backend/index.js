@@ -33,8 +33,14 @@ app.use(cookieParser());
 // });
 // LOGOUT
 app.get("/logout", (req, res) => {
-  res.clearCookie("token").json({ success: true });
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "None",
+  });
+  res.json({ success: true });
 });
+
 app.post("/newsession", verifyUser, async (req, res) => {
   const { title, tags, jsonUrl, status, updatedAt } = req.body;
 
@@ -211,7 +217,7 @@ app.post("/register", async (req, res) => {
     await newuser.save();
     console.log(newuser);
     const token = createToken(newuser._id);
-    res.cookie("token", token, {
+    res.cookie("token",  {
       httpOnly: true,
       secure: false,
       sameSite: "lax",
