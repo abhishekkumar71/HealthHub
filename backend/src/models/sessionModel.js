@@ -1,13 +1,31 @@
+const { text } = require("express");
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const Model = mongoose.model;
+
+const stepSchema = new Schema(
+  {
+    title: String,
+    description: String,
+  },
+  { _id: false }
+);
 const sessionSchema = new Schema({
   title: {
     type: String,
     required: true,
   },
   tags: [String],
-  jsonUrl: { type: String, required: true },
+  mediaType: {
+    type: String,
+    enum: ["images", "video"],
+    required: true,
+  },
+  mediaUrls: {
+    type: [String],
+    required: true,
+  },
+  steps:[stepSchema],
   status: {
     type: String,
     enum: ["draft", "published"],
@@ -24,7 +42,7 @@ const sessionSchema = new Schema({
   },
 });
 sessionSchema.pre("save", function (next) {
-  updatedAt: Date.now();
+  this.updatedAt = Date.now();
   next();
 });
 const session = new Model("session", sessionSchema);

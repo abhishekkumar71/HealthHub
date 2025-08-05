@@ -10,12 +10,21 @@ import {
   Box,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-
+import AddIcon from "@mui/icons-material/Add";
 const SessionForm = ({ sessionId = null, isEdit = false }) => {
   const [title, setTitle] = useState("");
   const [tags, setTags] = useState([]);
   const [tagInput, setTagInput] = useState("");
-  const [jsonUrl, setJsonUrl] = useState("");
+  const [mediaType, setMediaType] = useState("video");
+  const [mediaFiles, setMediaFiles] = useState([]);
+  const [mediaUrls, setMediaUrls] = useState([]);
+  const [steps, setSteps] = useState([
+    {
+      title: "",
+      description: "",
+    },
+  ]);
+
   const [status, setStatus] = useState("draft");
   const [loading, setLoading] = useState(false);
   const [snackbarMsg, setSnackbarMsg] = useState("");
@@ -34,7 +43,9 @@ const SessionForm = ({ sessionId = null, isEdit = false }) => {
           if (session) {
             setTitle(session.title);
             setTags(session.tags || []);
-            setJsonUrl(session.jsonUrl);
+            setMediaType(session.mediaType || "video");
+            setMediaUrls(session.mediaUrls || []);
+            setSteps(session.steps || [{ title: "", description: "" }]);
             setStatus(session.status);
           }
         })
@@ -64,28 +75,50 @@ const SessionForm = ({ sessionId = null, isEdit = false }) => {
       clearInterval(autoSaveIntervalRef.current);
       window.removeEventListener("keydown", resetTimer);
     };
-  }, [title, tags, jsonUrl]);
+  }, [title, tags, steps, mediaType, mediaFiles]);
+  const handleUpload = async () => {
+    const formData = new FormData();
+    mediaFiles.forEach((file) => formData.append("files", file));
+    const res = await axios.post("/api/upload", formData);
+    return res.data.urls;
+  };
 
   const handleSave = async (saveStatus = "draft", silent = false) => {
     setLoading(true);
     try {
+      let urls = mediaUrls;
+      if (urls.length === 0 && mediaFiles.length > 0) {
+        urls = await handleUpload();
+        setMediaUrls(urls);
+      }
+
       const payload = {
         title,
         tags,
-        jsonUrl,
+        mediaType,
+        mediaUrls: urls,
+        steps,
         status: saveStatus,
         updatedAt: new Date(),
       };
 
       let res;
       if (isEdit) {
-        res = await axios.put(`https://healthhub-backend-sldu.onrender.com/edit/${sessionId}`, payload, {
-          withCredentials: true,
-        });
+        res = await axios.put(
+          `https://healthhub-backend-sldu.onrender.com/edit/${sessionId}`,
+          payload,
+          {
+            withCredentials: true,
+          }
+        );
       } else {
-        res = await axios.post("https://healthhub-backend-sldu.onrender.com/newsession", payload, {
-          withCredentials: true,
-        });
+        res = await axios.post(
+          "https://healthhub-backend-sldu.onrender.com/newsession",
+          payload,
+          {
+            withCredentials: true,
+          }
+        );
 
         const newId = res.data.session?._id;
 
@@ -99,7 +132,9 @@ const SessionForm = ({ sessionId = null, isEdit = false }) => {
       }
 
       if (!silent) {
-        setSnackbarMsg(saveStatus === "published" ? "Session Published!" : "Draft Saved");
+        setSnackbarMsg(
+          saveStatus === "published" ? "Session Published!" : "Draft Saved"
+        );
       }
     } catch (err) {
       console.error("Save error:", err);
@@ -153,21 +188,113 @@ const SessionForm = ({ sessionId = null, isEdit = false }) => {
           ))}
         </Stack>
 
-        <TextField
-          label="JSON URL"
-          value={jsonUrl}
+        <Stack direction="row" spacing={2}>
+          <label>
+            <input
+              type="radio"
+              value="video"
+              checked={mediaType === "video"}
+              onChange={() => setMediaType("video")}
+            />
+            Video
+          </label>
+          <label>
+            <input
+              type="radio"
+              value="images"
+              checked={mediaType === "images"}
+              onChange={() => setMediaType("images")}
+            />
+            Images
+          </label>
+        </Stack>
+
+        <input
+          type="file"
+          accept={mediaType === "video" ? "video/*" : "image/*"}
+          multiple={mediaType === "images"}
           onChange={(e) => {
-            setJsonUrl(e.target.value);
+            setMediaFiles([...e.target.files]);
             isDirty.current = true;
           }}
-          fullWidth
         />
+
+        {steps.map((step, i) => (
+          <Box
+            key={i}
+            sx={{ mt: 2, border: "1px solid #ccc", p: 2, borderRadius: 1 }}
+          >
+            <TextField
+              label={`Step ${i + 1} Title`}
+              value={step.title}
+              onChange={(e) => {
+                const updated = [...steps];
+                updated[i].title = e.target.value;
+                setSteps(updated);
+                isDirty.current = true;
+              }}
+              fullWidth
+              sx={{ mb: 1 }}
+            />
+            <TextField
+              label="Description"
+              value={step.description}
+              onChange={(e) => {
+                const updated = [...steps];
+                updated[i].description = e.target.value;
+                setSteps(updated);
+                isDirty.current = true;
+              }}
+              fullWidth
+              multiline
+            />
+          </Box>
+        ))}
+        {mediaUrls.length > 0 && (
+          <Box sx={{ mt: 2 }}>
+            <strong>Uploaded Media:</strong>
+            <Stack direction="row" spacing={2} sx={{ mt: 1, flexWrap: "wrap" }}>
+              {mediaType === "images" &&
+                mediaUrls.map((url, i) => (
+                  <img
+                    key={i}
+                    src={url}
+                    alt={`media-${i}`}
+                    style={{
+                      width: 100,
+                      height: 100,
+                      objectFit: "cover",
+                      borderRadius: 4,
+                    }}
+                  />
+                ))}
+              {mediaType === "video" && (
+                <video controls style={{ width: 250, borderRadius: 4 }}>
+                  <source src={mediaUrls[0]} type="video/mp4" />
+                </video>
+              )}
+            </Stack>
+          </Box>
+        )}
+
+        <Button
+          onClick={() => setSteps([...steps, { title: "", description: "" }])}
+          variant="text"
+        >
+          <AddIcon /> Add Step
+        </Button>
 
         <Stack direction="row" spacing={2} alignItems="center">
           <Button variant="outlined" onClick={() => handleSave("draft")}>
             Save Draft
           </Button>
-          <Button variant="contained" onClick={() => handleSave("published")}>
+          <Button
+            variant="contained"
+            onClick={() => handleSave("published")}
+            disabled={
+              !title || (mediaFiles.length == 0 && mediaUrls.length == 0)
+            }
+          >
             Publish
           </Button>
           {loading && <CircularProgress size={22} />}
