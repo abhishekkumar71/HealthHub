@@ -1,313 +1,284 @@
-import React, { useState, useEffect, useRef } from "react";
-import axios from "axios";
+import React, { useState } from "react";
 import {
-  TextField,
   Button,
-  Chip,
-  Stack,
-  Snackbar,
-  CircularProgress,
   Box,
+  TextField,
+  IconButton,
+  Typography,
+  Paper,
+  Grid,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import AddIcon from "@mui/icons-material/Add";
-const SessionForm = ({ sessionId = null, isEdit = false }) => {
-  const [title, setTitle] = useState("");
-  const [tags, setTags] = useState([]);
+import { Delete } from "@mui/icons-material";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import axios from "axios";
+
+const SessionForm = ({ onSubmit, initialData }) => {
+  const [title, setTitle] = useState(initialData?.title || "");
   const [tagInput, setTagInput] = useState("");
-  const [mediaType, setMediaType] = useState("video");
-  const [mediaFiles, setMediaFiles] = useState([]);
-  const [mediaUrls, setMediaUrls] = useState([]);
-  const [steps, setSteps] = useState([
-    {
-      title: "",
-      description: "",
-    },
-  ]);
+  const [tags, setTags] = useState(initialData?.tags || []);
+  const [cover, setCover] = useState(initialData?.cover || null);
+  const [steps, setSteps] = useState(
+    initialData?.steps || [
+      { title: "", description: "", media: null, link: "" },
+    ]
+  );
 
-  const [status, setStatus] = useState("draft");
-  const [loading, setLoading] = useState(false);
-  const [snackbarMsg, setSnackbarMsg] = useState("");
+  const handleTagAdd = () => {
+    if (!tagInput) return;
 
-  const timerRef = useRef(null);
-  const autoSaveIntervalRef = useRef(null);
-  const isDirty = useRef(false);
-  const navigate = useNavigate();
+    const newTags = tagInput
+      .split(",")
+      .map((tag) => tag.trim())
+      .filter((tag) => tag !== "" && !tags.includes(tag));
 
-  useEffect(() => {
-    if (isEdit && sessionId) {
-      axios
-        .get(`/edit/${sessionId}`, { withCredentials: true })
-        .then((res) => {
-          const session = res.data.session;
-          if (session) {
-            setTitle(session.title);
-            setTags(session.tags || []);
-            setMediaType(session.mediaType || "video");
-            setMediaUrls(session.mediaUrls || []);
-            setSteps(session.steps || [{ title: "", description: "" }]);
-            setStatus(session.status);
-          }
-        })
-        .catch((err) => console.log("Fetch error:", err));
-    }
-  }, [isEdit, sessionId]);
-
-  useEffect(() => {
-    if (!isEdit) return;
-
-    const saveDraft = () => {
-      if (!isDirty.current) return;
-      handleSave("draft", true);
-      isDirty.current = false;
-    };
-
-    const resetTimer = () => {
-      if (timerRef.current) clearTimeout(timerRef.current);
-      timerRef.current = setTimeout(saveDraft, 5000);
-    };
-
-    window.addEventListener("keydown", resetTimer);
-    autoSaveIntervalRef.current = setInterval(saveDraft, 30000);
-
-    return () => {
-      clearTimeout(timerRef.current);
-      clearInterval(autoSaveIntervalRef.current);
-      window.removeEventListener("keydown", resetTimer);
-    };
-  }, [title, tags, steps, mediaType, mediaFiles]);
-  const handleUpload = async () => {
-    const formData = new FormData();
-    mediaFiles.forEach((file) => formData.append("files", file));
-    const res = await axios.post("/api/upload", formData);
-    return res.data.urls;
-  };
-
-  const handleSave = async (saveStatus = "draft", silent = false) => {
-    setLoading(true);
-    try {
-      let urls = mediaUrls;
-      if (urls.length === 0 && mediaFiles.length > 0) {
-        urls = await handleUpload();
-        setMediaUrls(urls);
-      }
-
-      const payload = {
-        title,
-        tags,
-        mediaType,
-        mediaUrls: urls,
-        steps,
-        status: saveStatus,
-        updatedAt: new Date(),
-      };
-
-      let res;
-      if (isEdit) {
-        res = await axios.put(
-          `https://healthhub-backend-sldu.onrender.com/edit/${sessionId}`,
-          payload,
-          {
-            withCredentials: true,
-          }
-        );
-      } else {
-        res = await axios.post(
-          "https://healthhub-backend-sldu.onrender.com/newsession",
-          payload,
-          {
-            withCredentials: true,
-          }
-        );
-
-        const newId = res.data.session?._id;
-
-        if (saveStatus === "published") {
-          navigate("/dashboard");
-          return;
-        } else if (newId) {
-          navigate(`/edit/${newId}`);
-          return;
-        }
-      }
-
-      if (!silent) {
-        setSnackbarMsg(
-          saveStatus === "published" ? "Session Published!" : "Draft Saved"
-        );
-      }
-    } catch (err) {
-      console.error("Save error:", err);
-      setSnackbarMsg("Error saving session");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleTagKeyPress = (e) => {
-    if (e.key === "Enter" && tagInput.trim()) {
-      setTags((prev) => [...prev, tagInput.trim()]);
+    if (newTags.length > 0) {
+      setTags([...tags, ...newTags]);
       setTagInput("");
-      isDirty.current = true;
     }
+  };
+
+  const handleTagRemove = (index) => {
+    setTags(tags.filter((_, i) => i !== index));
+  };
+
+  const handleCoverUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "healthhub_uploads");
+    const res = await axios.post(
+      "https://api.cloudinary.com/v1_1/dlslfhlpm/image/upload",
+      formData,
+      { withCredentials: false }
+    );
+    setCover(res.data.secure_url);
+  };
+  const handleStepMediaUpload = async (e, index) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "healthhub_uploads");
+
+    const fileType = file.type.startsWith("video") ? "video" : "image";
+
+    const res = await axios.post(
+      `https://api.cloudinary.com/v1_1/dlslfhlpm/${fileType}/upload`,
+      formData,
+      {
+        withCredentials: false,
+      }
+    );
+
+    const updatedSteps = [...steps];
+    updatedSteps[index].media = res.data.secure_url;
+    setSteps(updatedSteps);
+  };
+
+  const handleStepChange = (index, field, value) => {
+    const updatedSteps = [...steps];
+    updatedSteps[index][field] = value;
+    setSteps(updatedSteps);
+  };
+
+  const handleAddStep = () => {
+    setSteps([...steps, { title: "", description: "", media: null, link: "" }]);
+  };
+
+  const handleRemoveStep = (index) => {
+    setSteps(steps.filter((_, i) => i !== index));
+  };
+
+  const handleSubmit = (status) => {
+    const sessionData = {
+      title,
+      tags,
+      cover,
+      steps,
+      status,
+    };
+    onSubmit(sessionData);
   };
 
   return (
-    <Box sx={{ maxWidth: 600, mx: "auto", p: 2 }}>
-      <Stack spacing={2}>
-        <TextField
-          label="Title"
-          value={title}
-          onChange={(e) => {
-            setTitle(e.target.value);
-            isDirty.current = true;
-          }}
-          fullWidth
-          required
-        />
-
-        <TextField
-          label="Add Tag"
-          value={tagInput}
-          onChange={(e) => setTagInput(e.target.value)}
-          onKeyDown={handleTagKeyPress}
-          helperText="Press Enter to add tag"
-          fullWidth
-        />
-
-        <Stack direction="row" spacing={1} flexWrap="wrap">
-          {tags.map((tag, index) => (
-            <Chip
-              key={index}
-              label={tag}
-              onDelete={() => {
-                setTags((prev) => prev.filter((_, i) => i !== index));
-                isDirty.current = true;
-              }}
-            />
-          ))}
-        </Stack>
-
-        <Stack direction="row" spacing={2}>
-          <label>
-            <input
-              type="radio"
-              value="video"
-              checked={mediaType === "video"}
-              onChange={() => setMediaType("video")}
-            />
-            Video
-          </label>
-          <label>
-            <input
-              type="radio"
-              value="images"
-              checked={mediaType === "images"}
-              onChange={() => setMediaType("images")}
-            />
-            Images
-          </label>
-        </Stack>
-
-        <input
-          type="file"
-          accept={mediaType === "video" ? "video/*" : "image/*"}
-          multiple={mediaType === "images"}
-          onChange={(e) => {
-            setMediaFiles([...e.target.files]);
-            isDirty.current = true;
-          }}
-        />
-
-        {steps.map((step, i) => (
-          <Box
-            key={i}
-            sx={{ mt: 2, border: "1px solid #ccc", p: 2, borderRadius: 1 }}
+    <Paper sx={{ p: 3, maxWidth: 800, mx: "auto" }}>
+      <TextField
+        fullWidth
+        label="Title"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+        margin="normal"
+      />
+      <TextField
+        fullWidth
+        label="Add Tag"
+        value={tagInput}
+        onBlur={handleTagAdd}
+        onChange={(e) => setTagInput(e.target.value)}
+        onKeyDown={(e) => e.key === "Enter" && handleTagAdd()}
+        margin="normal"
+      />
+      <div
+        style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 16 }}
+      >
+        {tags.map((tag, index) => (
+          <Paper
+            key={index}
+            sx={{ px: 1.5, py: 0.5, display: "flex", alignItems: "center" }}
           >
-            <TextField
-              label={`Step ${i + 1} Title`}
-              value={step.title}
-              onChange={(e) => {
-                const updated = [...steps];
-                updated[i].title = e.target.value;
-                setSteps(updated);
-                isDirty.current = true;
-              }}
-              fullWidth
-              sx={{ mb: 1 }}
-            />
-            <TextField
-              label="Description"
-              value={step.description}
-              onChange={(e) => {
-                const updated = [...steps];
-                updated[i].description = e.target.value;
-                setSteps(updated);
-                isDirty.current = true;
-              }}
-              fullWidth
-              multiline
-            />
-          </Box>
+            <span>{tag}</span>
+            <IconButton onClick={() => handleTagRemove(index)} size="small">
+              <Delete fontSize="small" />
+            </IconButton>
+          </Paper>
         ))}
-        {mediaUrls.length > 0 && (
-          <Box sx={{ mt: 2 }}>
-            <strong>Uploaded Media:</strong>
-            <Stack direction="row" spacing={2} sx={{ mt: 1, flexWrap: "wrap" }}>
-              {mediaType === "images" &&
-                mediaUrls.map((url, i) => (
-                  <img
-                    key={i}
-                    src={url}
-                    alt={`media-${i}`}
-                    style={{
-                      width: 100,
-                      height: 100,
-                      objectFit: "cover",
-                      borderRadius: 4,
-                    }}
-                  />
-                ))}
-              {mediaType === "video" && (
-                <video controls style={{ width: 250, borderRadius: 4 }}>
-                  <source src={mediaUrls[0]} type="video/mp4" />
-                </video>
-              )}
-            </Stack>
-          </Box>
-        )}
-
-        <Button
-          onClick={() => setSteps([...steps, { title: "", description: "" }])}
-          variant="text"
+      </div>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "flex-start",
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            minWidth: "30%",
+            justifyContent: "space-evenly",
+          }}
         >
-          <AddIcon /> Add Step
-        </Button>
-
-        <Stack direction="row" spacing={2} alignItems="center">
-          <Button variant="outlined" onClick={() => handleSave("draft")}>
-            Save Draft
-          </Button>
+          <Typography variant="subtitle1">Cover Photo</Typography>
           <Button
             variant="contained"
-            onClick={() => handleSave("published")}
-            disabled={
-              !title || (mediaFiles.length == 0 && mediaUrls.length == 0)
-            }
+            component="label"
+            startIcon={<CloudUploadIcon />}
           >
+            Upload Cover
+            <input
+              hidden
+              type="file"
+              accept="image/*"
+              onChange={handleCoverUpload}
+            />
+          </Button>
+        </Box>
+
+        <Box sx={{ marginLeft: "30px" }}>
+          {cover && (
+            <img
+              src={cover}
+              alt="Cover"
+              style={{ width: "30%", marginTop: 10, borderRadius: "10px" }}
+            />
+          )}
+        </Box>
+      </Box>
+
+      <Typography variant="h6" mt={4} gutterBottom>
+        Steps
+      </Typography>
+
+      {steps.map((step, index) => (
+        <Paper key={index} sx={{ p: 2, my: 2 }}>
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Step Title"
+                fullWidth
+                value={step.title}
+                onChange={(e) =>
+                  handleStepChange(index, "title", e.target.value)
+                }
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Link (optional)"
+                fullWidth
+                value={step.link}
+                onChange={(e) =>
+                  handleStepChange(index, "link", e.target.value)
+                }
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                label="Step Description"
+                fullWidth
+                multiline
+                minRows={2}
+                value={step.description}
+                onChange={(e) =>
+                  handleStepChange(index, "description", e.target.value)
+                }
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Button variant="outlined" component="label">
+                Upload Image/Video
+                <input
+                  hidden
+                  type="file"
+                  accept="image/*,video/*"
+                  onChange={(e) => handleStepMediaUpload(e, index)}
+                />
+              </Button>{" "}
+              {step.media && (
+                <div
+                  style={{
+                    marginTop: 10,
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
+                  {step.media.includes("video") ? (
+                    <video src={step.media} controls style={{ width: "30%" }} />
+                  ) : (
+                    <img
+                      src={step.media}
+                      alt="Step Media"
+                      style={{ width: "30%", borderRadius: "10px" }}
+                    />
+                  )}
+                  <Button
+                    color="error"
+                    onClick={() => handleStepChange(index, "media", null)}
+                    sx={{ marginLeft: "20px", height: "50%" }}
+                  >
+                    Remove
+                  </Button>
+                </div>
+              )}{" "}
+            </Grid>
+            <Grid item xs={12}>
+              <Button color="error" onClick={() => handleRemoveStep(index)}>
+                Remove Step
+              </Button>
+            </Grid>
+          </Grid>
+        </Paper>
+      ))}
+
+      <Button onClick={handleAddStep} sx={{ my: 2 }}>
+        + Add Step
+      </Button>
+
+      <Grid container spacing={2}>
+        <Grid item>
+          <Button variant="outlined" onClick={() => handleSubmit("draft")}>
+            Save as Draft
+          </Button>
+        </Grid>
+        <Grid item>
+          <Button variant="contained" onClick={() => handleSubmit("published")}>
             Publish
           </Button>
-          {loading && <CircularProgress size={22} />}
-        </Stack>
-      </Stack>
-
-      <Snackbar
-        open={!!snackbarMsg}
-        autoHideDuration={3000}
-        message={snackbarMsg}
-        onClose={() => setSnackbarMsg("")}
-      />
-    </Box>
+        </Grid>
+      </Grid>
+    </Paper>
   );
 };
 

@@ -23,14 +23,13 @@ function App() {
   const API_BASE_URL = import.meta.env.DEV
     ? ""
     : "https://healthhub-backend-sldu.onrender.com";
-useEffect(() => {
-  axios
-    .get(`${API_BASE_URL}/me`)
-    .then((res) => setUser(res.data.user))
-    .catch(() => setUser(null))
-    .finally(() => setLoading(false));
-}, []);
-
+  useEffect(() => {
+    axios
+      .get(`${API_BASE_URL}/me`)
+      .then((res) => setUser(res.data.user))
+      .catch(() => setUser(null))
+      .finally(() => setLoading(false));
+  }, []);
 
   const Protected = ({ children }) => {
     if (loading) return <div>Loading...</div>;
@@ -40,7 +39,7 @@ useEffect(() => {
 
   return (
     <SnackbarProvider maxSnack={1}>
-      <div className="layout">
+      <div className="layout" style={{ paddingTop: "64px" }}>
         <BrowserRouter>
           <Navbar
             setAuthOpen={setAuthOpen}
@@ -61,7 +60,7 @@ useEffect(() => {
                 }
               />
 
-              <Route path="/sessions/:id" element={<SessionDetails />} />
+              <Route path="/session/:id" element={<SessionDetails />} />
               <Route path="/explore" element={<AllPosts />} />
 
               <Route
@@ -84,7 +83,7 @@ useEffect(() => {
                 }
               />
               <Route
-                path="/dashboard/edit/:id"
+                path="/editSession/:id"
                 element={
                   <Protected>
                     <EditSession />

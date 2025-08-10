@@ -39,15 +39,81 @@ a:hover {
   text-decoration: dashed;
   scale: 1.1;
 }
-.newSession{
+.newSession {
   margin-top: 12rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
   padding: 19px;
 }
-.sessionForm{
+.sessionForm {
   display: flex;
   flex-direction: column;
   padding: 50px;
+}
+.postsGrid {
+  padding: 2rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  align-items: start;
+}
+.session {
+  position: relative;
+  width: 300px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.session:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.hoverOverlay {
+  position: absolute;
+  bottom: 3px; 
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.session:hover .hoverOverlay {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.author {
+  display: flex;
+  justify-content: flex-end;
+  margin: 5px;
+  font-size: 0.9rem;
+  color: #4b5563;
+}
+.searchBar {
+  margin-top: 3rem;
+
+  background-color: #deebe2;
+  height: 2rem;
+  width: 25rem;
+  padding: 7px;
+  border: 1px solid black;
+  border-radius: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.searchInput {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: medium;
+  background-color: #deebe2;
+  border: none;
+  width: 100%;
+}
+.searchInput:focus {
+  outline: none;
+  border: none;
+  box-shadow: none;
 }

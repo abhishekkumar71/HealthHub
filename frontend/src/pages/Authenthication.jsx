@@ -19,7 +19,7 @@ import { useNavigate } from "react-router-dom";
 export default function AuthModal({ open, setOpen, mode, setMode, onSuccess }) {
   const isLogin = mode === "login";
   const navigate = useNavigate();
-  const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -48,7 +48,7 @@ export default function AuthModal({ open, setOpen, mode, setMode, onSuccess }) {
     if (!password) newErrors.password = "Password is required";
 
     if (!isLogin) {
-      if (!name) newErrors.name = "Name is required";
+      if (!username) newErrors.name = "Username is required";
       if (!confirmPassword) {
         newErrors.confirmPassword = "Please confirm your password";
       } else if (password !== confirmPassword) {
@@ -66,10 +66,10 @@ export default function AuthModal({ open, setOpen, mode, setMode, onSuccess }) {
     if (!validateFields()) return;
 
     try {
-      const url = `http://localhost:5173/${
+      const url = `https://healthhub-backend-sldu.onrender.com/${
         isLogin ? "login" : "register"
       }`;
-      const payload = isLogin ? { email, password } : { name, email, password };
+      const payload = isLogin ? { email, password } : { username, email, password };
 
       const { data } = await axios.post(url, payload, {
         withCredentials: true,
@@ -79,7 +79,7 @@ export default function AuthModal({ open, setOpen, mode, setMode, onSuccess }) {
       if (success) {
         setServerSuccess(message);
         const me = await axios.get(
-          "http://localhost:5173/me",
+          "https://healthhub-backend-sldu.onrender.com/me",
           {
             withCredentials: true,
           }
@@ -116,9 +116,9 @@ export default function AuthModal({ open, setOpen, mode, setMode, onSuccess }) {
         >
           {!isLogin && (
             <TextField
-              label="Name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              label="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               error={!!errors.name}
               helperText={errors.name}
             />

@@ -1,11 +1,10 @@
-const User = require("./src/models/UserModel");
-const { verifyUser } = require("../middlewares/Authentication");
+const User = require("../models/UserModel");
 const bcrypt = require("bcryptjs");
 const { createToken } = require("../middlewares/secretToken");
 
 module.exports.register = async (req, res) => {
-  const { name, email, password } = req.body;
-  if (!name || !email || !password) {
+  const { username, email, password } = req.body;
+  if (!username || !email || !password) {
     return res.json({ message: "All fields are requred!" });
   }
   try {
@@ -13,11 +12,11 @@ module.exports.register = async (req, res) => {
     if (existingUser) {
       return res.json({ message: "user already exists!" });
     }
-    let newuser = new User({ name, email, password });
+    let newuser = new User({ username, email, password });
     await newuser.save();
     console.log(newuser);
     const token = createToken(newuser._id);
-    res.cookie("token",token, {
+    res.cookie("token", token, {
       httpOnly: true,
       secure: false,
       sameSite: "lax",
@@ -77,7 +76,7 @@ module.exports.me = async (req, res) => {
     if (!user) {
       return res
         .status(404)
-        .json({ success: false, message: "User not found" });
+        .json({ success: false,user, message: "User not found" });
     }
 
     res.status(200).json({ success: true, user });
@@ -85,4 +84,12 @@ module.exports.me = async (req, res) => {
     console.log(error);
     res.status(500).json({ success: false, message: "Something went wrong" });
   }
+};
+module.exports.logout = async (req, res) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "None",
+  });
+  res.json({ success: true });
 };

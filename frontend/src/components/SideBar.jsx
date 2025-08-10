@@ -22,10 +22,10 @@ export default function Sidebar({ user }) {
         width: drawerWidth,
         flexShrink: 0,
         [`& .MuiDrawer-paper`]: {
-          top: "9vh",
           width: drawerWidth,
+          height: "100vh",
+          paddingTop: "64px",
           boxSizing: "border-box",
-          height: "93vh",
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
@@ -56,7 +56,6 @@ export default function Sidebar({ user }) {
         </List>
       </Box>
 
-      {/* Profile section */}
       <Box p={2} borderTop="1px solid #ccc">
         <Typography variant="body2" color="textSecondary">
           <AccountCircle

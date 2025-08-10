@@ -1,31 +1,39 @@
-const { text } = require("express");
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const Model = mongoose.model;
 
 const stepSchema = new Schema(
   {
-    title: String,
-    description: String,
+    title: { type: String, required: true },
+    description: { type: String, required: true },
+    media: { type: String }, // can be image or video URL
+    link: { type: String }, // optional
   },
   { _id: false }
 );
+
 const sessionSchema = new Schema({
   title: {
     type: String,
     required: true,
   },
-  tags: [String],
-  mediaType: {
-    type: String,
-    enum: ["images", "video"],
-    required: true,
+  cover: {
+    type: String, // URL of cover image
   },
-  mediaUrls: {
+  tags: {
     type: [String],
-    required: true,
+    default: [],
   },
-  steps:[stepSchema],
+  steps: {
+    type: [stepSchema],
+    default: [],
+    validate: {
+      validator: function (steps) {
+        return Array.isArray(steps) && steps.length > 0;
+      },
+      message: "At least one step is required.",
+    },
+  },
   status: {
     type: String,
     enum: ["draft", "published"],
@@ -40,10 +48,13 @@ const sessionSchema = new Schema({
     type: Date,
     default: Date.now,
   },
+  author: { type: String, required: true },
 });
+
 sessionSchema.pre("save", function (next) {
   this.updatedAt = Date.now();
   next();
 });
-const session = new Model("session", sessionSchema);
-module.exports = session;
+
+const Session = Model("Session", sessionSchema);
+module.exports = Session;

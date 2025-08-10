@@ -1,11 +1,19 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Box, Typography, Button, CircularProgress } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Button,Tooltip,IconButton,
+  CircularProgress,
+  Grid,
+  useMediaQuery,
+} from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import SessionCard from "../components/SessionCardsd";
-import Sidebar from "../components/SideBar";
+import DashboardSessionCard from "../components/DashboardSessionComponent";
 import { useSnackbar } from "notistack";
 import { SentimentDissatisfied } from "@mui/icons-material";
+import ControlPointIcon from "@mui/icons-material/ControlPoint";
+import { useTheme } from "@mui/material/styles";
 
 const Dashboard = () => {
   const [sessions, setSessions] = useState([]);
@@ -13,9 +21,11 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
-  const API_BASE_URL = import.meta.env.DEV
-    ? ""
-    : "https://healthhub-backend-sldu.onrender.com";
+  const [username, setUsername] = useState("");
+  const API_BASE_URL = import.meta.env.DEV ? "" : "https://healthhub-backend-sldu.onrender.com";
+
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
   useEffect(() => {
     const fetchSessions = async () => {
@@ -23,10 +33,8 @@ const Dashboard = () => {
         const res1 = await axios.get(`${API_BASE_URL}/me`, {
           withCredentials: true,
         });
-        console.log("res1.data", res1.data);
-
         const userId = res1.data._id;
-
+        setUsername(res1.data.user.username);
         const res2 = await axios.get(`${API_BASE_URL}/my-sessions`, {
           withCredentials: true,
         });
@@ -38,7 +46,7 @@ const Dashboard = () => {
           withCredentials: true,
         });
         if (res3.data.success) {
-          setDrafts(res3.data.sessions);
+          setDrafts(res3.data.drafts);
         }
       } catch (err) {
         console.log(err);
@@ -56,34 +64,44 @@ const Dashboard = () => {
   };
 
   return (
-    <Box sx={{ display: "flex", minHeight: "100vh" }}>
-      <Sidebar />
-
-      <Box
-        sx={{
-          flex: 1,
-          p: { xs: 2, md: 4 },
-          maxWidth: "900px",
-          mx: "auto",
-          mt: { xs: 8, md: 4 },
-        }}
-      >
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        padding: 5,
+        width: "95%",
+      }}
+    >
+      <h1>Welcome {username.toUpperCase()} !</h1>
+      <Box sx={{ padding: "5%", width: "100%" }}>
         <Box
           sx={{
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
             mb: 3,
+            width: "95%",
           }}
         >
           <Typography variant="h5" fontWeight="bold">
             Your Sessions
           </Typography>
-          <Button variant="contained" onClick={handleCreateNew}>
-            Create New Session
-          </Button>
+          {isSmallScreen ? (
+            <Tooltip title="Create New Session" arrow>
+              <IconButton color="primary" onClick={handleCreateNew}>
+                <ControlPointIcon />
+              </IconButton>
+            </Tooltip>
+          ) : (
+            <Button
+              variant="contained"
+              onClick={handleCreateNew}
+              startIcon={<ControlPointIcon />}
+            >
+              Create New Session
+            </Button>
+          )}
         </Box>
-
         {loading ? (
           <CircularProgress />
         ) : (
@@ -103,9 +121,16 @@ const Dashboard = () => {
                     <Typography variant="h6" gutterBottom>
                       Published Sessions
                     </Typography>
-                    {sessions.map((session) => (
-                      <SessionCard key={session._id} session={session} />
-                    ))}
+                    <Grid container spacing={2}>
+                      {sessions.map((session) => (
+                        <Grid item xs={12} sm={6} md={4} key={session._id}>
+                          <DashboardSessionCard
+                            key={session._id}
+                            session={session}
+                          />{" "}
+                        </Grid>
+                      ))}
+                    </Grid>
                   </>
                 )}
 
@@ -114,9 +139,13 @@ const Dashboard = () => {
                     <Typography variant="h6" sx={{ mt: 4 }} gutterBottom>
                       Drafts
                     </Typography>
-                    {drafts.map((session) => (
-                      <SessionCard key={session._id} session={session} />
-                    ))}
+                    <Grid container spacing={2}>
+                      {drafts.map((session) => (
+                        <Grid item xs={12} sm={6} md={4} key={session._id}>
+                          <DashboardSessionCard session={session} />
+                        </Grid>
+                      ))}
+                    </Grid>
                   </>
                 )}
               </>

@@ -16,7 +16,11 @@ export default function HeroSection({ user, setAuthOpen, setAuthMode }) {
         <Button
           variant="contained"
           size="large"
-          sx={{ backgroundColor: "#075b07" }}
+          sx={{ backgroundColor: "#075b07",
+             "&:hover":{
+             boxShadow:"6",
+             transform:"scale(1.05)"
+             }}}
           onClick={() => {
             if (user) {
               console.log(user);
@@ -25,7 +29,9 @@ export default function HeroSection({ user, setAuthOpen, setAuthMode }) {
               setAuthMode("login");
               setAuthOpen(true);
             }
+            
           }}
+          
         >
           Get Started
         </Button>
