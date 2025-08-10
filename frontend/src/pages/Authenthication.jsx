@@ -36,7 +36,7 @@ export default function AuthModal({ open, setOpen, mode, setMode, onSuccess }) {
     setErrors({});
     setServerError(null);
     setServerSuccess(null);
-    setName("");
+    setUsername("");
     setEmail("");
     setPassword("");
     setConfirmPassword("");
