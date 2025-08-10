@@ -66,7 +66,7 @@ export default function AuthModal({ open, setOpen, mode, setMode, onSuccess }) {
     if (!validateFields()) return;
 
     try {
-      const url = `https://healthhub-backend-sldu.onrender.com/${
+      const url = `http://localhost:5173/${
         isLogin ? "login" : "register"
       }`;
       const payload = isLogin ? { email, password } : { username, email, password };
