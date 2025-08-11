@@ -39,12 +39,11 @@ export default function Navbar({ setAuthOpen, setAuthMode, user, setUser }) {
   const navigate = useNavigate();
   const [anchorElNav, setAnchorElNav] = React.useState(null);
 
-  
-;
-
   const handleLogout = async () => {
     try {
-      await axios.get("https://healthhub-backend-sldu.onrender.com/logout", { withCredentials: true });
+      await axios.get("https://healthhub-backend-sldu.onrender.com/logout", {
+        withCredentials: true,
+      });
       setUser(null);
       navigate("/");
     } catch (e) {
@@ -59,8 +58,8 @@ export default function Navbar({ setAuthOpen, setAuthMode, user, setUser }) {
     setAnchorElNav(null);
   };
 
-  const hideAuthLinks = ["/dashboard", "/new", "/edit"].some(
-    (path) => location.pathname.startsWith(path)
+  const hideAuthLinks = ["/dashboard", "/new", "/edit"].some((path) =>
+    location.pathname.startsWith(path)
   );
 
   const navLinks = [
@@ -82,8 +81,8 @@ export default function Navbar({ setAuthOpen, setAuthMode, user, setUser }) {
       },
     },
     {
-      name:"Create Session",
-     action: () => {
+      name: "Create Session",
+      action: () => {
         if (user) {
           navigate("/dashboard/new");
         } else {
@@ -91,15 +90,31 @@ export default function Navbar({ setAuthOpen, setAuthMode, user, setUser }) {
           setAuthOpen(true);
         }
       },
-    }
+    },
   ];
 
   return (
     <HideOnScroll>
-      <AppBar sx={{ backgroundColor: "#075b07", width: "100%", top: "0" ,position:"fixed",zIndex:(theme)=>theme.zIndex.drawer+1}}>
+      <AppBar
+        sx={{
+          backgroundColor: "#075b07",
+          width: "100%",
+          top: "0",
+          position: "fixed",
+          zIndex: (theme) => theme.zIndex.drawer + 1,
+        }}
+      >
         <Container>
           <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 2,":hover":{cursor:"pointer"} }} onClick={()=>navigate("/")}>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 2,
+                ":hover": { cursor: "pointer" },
+              }}
+              onClick={() => navigate("/")}
+            >
               <img
                 src="/logo.png"
                 alt="logo"
@@ -132,6 +147,14 @@ export default function Navbar({ setAuthOpen, setAuthMode, user, setUser }) {
                 {!user &&
                   !hideAuthLinks && [
                     <MenuItem
+                      key="Explore"
+                      onClick={() => {
+                        navigate("/explore");
+                      }}
+                    >
+                      <Typography>Login</Typography>
+                    </MenuItem>,
+                    <MenuItem
                       key="login"
                       onClick={() => {
                         setAuthOpen(true);
@@ -152,7 +175,6 @@ export default function Navbar({ setAuthOpen, setAuthMode, user, setUser }) {
                       <Typography>Register</Typography>
                     </MenuItem>,
                   ]}
-
               </Menu>
             </Box>
 
@@ -191,7 +213,6 @@ export default function Navbar({ setAuthOpen, setAuthMode, user, setUser }) {
                 </>
               )}
               {user && (
-                
                 <Button
                   onClick={handleLogout}
                   sx={{ color: "white", textTransform: "none", ml: 2 }}
