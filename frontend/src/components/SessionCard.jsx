@@ -19,7 +19,7 @@ const SessionCard = ({ session }) => {
   useEffect(() => {
     const fetchMe = async () => {
       try {
-        const res = await axios.get("http://localhost:8080/me", {
+        const res = await axios.get("https://healthhub-backend-sldu.onrender.com/me", {
           withCredentials: true,
         });
         if (res.data.success) {
@@ -40,7 +40,7 @@ const SessionCard = ({ session }) => {
       return;
 
     try {
-      await axios.delete(`http://localhost:8080/delete/${session._id}`, {
+      await axios.delete(`https://healthhub-backend-sldu.onrender.com/delete/${session._id}`, {
         withCredentials: true,
       });
       window.location.reload();

@@ -20,7 +20,7 @@ const DashboardSessionCard = ({ session }) => {
       return;
 
     try {
-      await axios.delete(`http://localhost:8080/delete/${session._id}`, {
+      await axios.delete(`https://healthhub-backend-sldu.onrender.com/delete/${session._id}`, {
         withCredentials: true,
       });
       window.location.reload();

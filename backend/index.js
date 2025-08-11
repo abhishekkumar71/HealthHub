@@ -27,7 +27,7 @@ app.use("/", userRoutes);
 app.use("/", sessionRoutes);
 app.listen(8080, () => {
   mongoose
-    .connect(process.env.MONGO_URL, {
+    .connect(db_url, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       ssl: true,

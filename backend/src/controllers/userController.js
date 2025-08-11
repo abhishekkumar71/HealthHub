@@ -5,12 +5,12 @@ const { createToken } = require("../middlewares/secretToken");
 module.exports.register = async (req, res) => {
   const { username, email, password } = req.body;
   if (!username || !email || !password) {
-    return res.json({ message: "All fields are requred!" });
+    return res.json({ message: "All fields are requred!",success: false });
   }
   try {
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.json({ message: "user already exists!" });
+      return res.json({ message: "user already exists!",success: false });
     }
     let newuser = new User({ username, email, password });
     await newuser.save();
@@ -38,13 +38,13 @@ module.exports.login = async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
     return res.json({
-      message: "all fields are required",
+      message: "all fields are required",success: false
     });
   }
   try {
     const user = await User.findOne({ email });
     if (!user) {
-      return res.json({ message: "User doesn't exist!" });
+      return res.json({ message: "User doesn't exist!",success: false });
     }
     const valid = await bcrypt.compare(password, user.password);
     if (!valid) {
@@ -53,9 +53,10 @@ module.exports.login = async (req, res) => {
       });
     }
     const token = createToken(user._id);
-      res.cookie("token", token, {
-      withCredentials: true,
-      httpOnly: false,
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
     });
     return res.json({
       message: "Logged In successfully!",
