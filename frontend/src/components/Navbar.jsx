@@ -147,12 +147,12 @@ export default function Navbar({ setAuthOpen, setAuthMode, user, setUser }) {
                 {!user &&
                   !hideAuthLinks && [
                     <MenuItem
-                      key="Explore"
+                      key="explore"
                       onClick={() => {
                         navigate("/explore");
                       }}
                     >
-                      <Typography>Login</Typography>
+                      <Typography>Explore</Typography>
                     </MenuItem>,
                     <MenuItem
                       key="login"
