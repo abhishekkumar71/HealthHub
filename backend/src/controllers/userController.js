@@ -53,10 +53,9 @@ module.exports.login = async (req, res) => {
       });
     }
     const token = createToken(user._id);
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "None",
+      res.cookie("token", token, {
+      withCredentials: true,
+      httpOnly: false,
     });
     return res.json({
       message: "Logged In successfully!",
