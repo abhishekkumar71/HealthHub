@@ -43,34 +43,30 @@ export default function PopularSessions() {
       </Typography>
       <Grid container spacing={3}>
         {sessions.map((s, i) => (
-          <Grid container spacing={3}>
-            {sessions.map((s, i) => (
-              <Grid item xs={6} sm={6} md={4} key={i}>
-                <Card
-                  sx={{
-                    height: "100%",
-                    display: "flex",
-                    flexDirection: "column",
-                    "&:hover": {
-                      boxShadow: 7,
-                    },
-                  }}
-                  onClick={() => {
-                    navigate(`/session/${s.id}`);
-                  }}
-                >
-                  <CardContent>
-                    <Typography variant="h6">{s.title}</Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {s.desc}
-                    </Typography>
-                    <Typography variant="caption" display="block" mt={1}>
-                      By {s.author}
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))}
+          <Grid item xs={6} sm={6} md={4} key={i}>
+            <Card
+              sx={{
+                height: "100%",
+                display: "flex",
+                flexDirection: "column",
+                "&:hover": {
+                  boxShadow: 7,
+                },
+              }}
+              onClick={() => {
+                navigate(`/session/${s.id}`);
+              }}
+            >
+              <CardContent>
+                <Typography variant="h6">{s.title}</Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {s.desc}
+                </Typography>
+                <Typography variant="caption" display="block" mt={1}>
+                  By {s.author}
+                </Typography>
+              </CardContent>
+            </Card>
           </Grid>
         ))}
       </Grid>
