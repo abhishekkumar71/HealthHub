@@ -46,6 +46,7 @@ export default function PopularSessions() {
           <Grid item xs={12} sm={6} md={4} key={i}>
             <Card
               sx={{
+                width:{xs:"100%"},
                 height:"100%",
                 "&:hover": {
                   boxShadow: 7,
