@@ -16,7 +16,7 @@ const EditSession = () => {
   useEffect(() => {
     const fetchSession = async () => {
       try {
-        const res = await axios.get(`https://healthhub-backend-sldu.onrender.com/${id}`, {
+        const res = await axios.get(`https://healthhub-backend-sldu.onrender.com/edit/${id}`, {
           withCredentials: true,
         });
         console.log(res);
