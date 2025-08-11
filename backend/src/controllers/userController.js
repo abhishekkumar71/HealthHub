@@ -1,7 +1,6 @@
 const User = require("../models/UserModel");
 const bcrypt = require("bcryptjs");
 const { createToken } = require("../middlewares/secretToken");
-const isProd = process.env.NODE_ENV === "production";
 
 module.exports.register = async (req, res) => {
   const { username, email, password } = req.body;
@@ -20,8 +19,8 @@ module.exports.register = async (req, res) => {
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: isProd,
-      sameSite: isProd ? "None" : "Lax",
+      secure: true,
+      sameSite: "None",
     });
 
     return res.json({
@@ -59,8 +58,8 @@ module.exports.login = async (req, res) => {
     const token = createToken(user._id);
     res.cookie("token", token, {
       httpOnly: true,
-      secure: isProd,
-      sameSite: isProd ? "None" : "Lax",
+      secure: true,
+      sameSite: "None",
     });
 
     return res.json({
@@ -93,8 +92,8 @@ module.exports.me = async (req, res) => {
 module.exports.logout = async (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
-    secure: isProd,
-    sameSite: isProd ? "None" : "Lax",
+    secure: true,
+    sameSite: "None",
   });
 
   res.json({ success: true });
