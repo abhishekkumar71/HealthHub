@@ -36,7 +36,6 @@ export default function FeaturesSection() {
 
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
-        height: "400px",
         width: "100%",
         py: 8,
       }}
