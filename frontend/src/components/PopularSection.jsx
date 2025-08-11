@@ -7,52 +7,43 @@ import {
   Button,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-const navigate = useNavigate();
-
-const sessions = [
-  {
-    title: "Morning Meditation",
-    desc: "Start your day with calm.",
-    author: "Anjali R.",
-    action: () => {
-      navigate(
-        "https://healthhub-ud5p.onrender.com/session/6897801705cd724f5bf89269"
-      );
-    },
-  },
-  {
-    title: "Evening Reflections",
-    desc: "Relax and rewind your thoughts.",
-    author: "Ravi M.",
-    action: () => {
-      navigate(
-        "https://healthhub-ud5p.onrender.com/session/68982a9d18ccd6fa406eaef4"
-      );
-    },
-  },
-  {
-    title: "Focus Booster",
-    desc: "Short session to sharpen your attention.",
-    author: "Arjun D.",
-    action: () => {
-      navigate(
-        "https://healthhub-ud5p.onrender.com/session/68989a2d4e2f825427ae64dd"
-      );
-    },
-  },
-  {
-    title: "Stress Release",
-    desc: "Let go of tension and restore peace.",
-    author: "Aditya S.",
-    action: () => {
-      navigate(
-        "https://healthhub-ud5p.onrender.com/session/68989c764e2f825427ae6525"
-      );
-    },
-  },
-];
 
 export default function PopularSessions() {
+  const navigate = useNavigate();
+  const sessions = [
+    {
+      title: "Morning Meditation",
+      desc: "Start your day with calm.",
+      author: "Anjali R.",
+      action: () => {
+        navigate("/session/6897801705cd724f5bf89269");
+      },
+    },
+    {
+      title: "Evening Reflections",
+      desc: "Relax and rewind your thoughts.",
+      author: "Ravi M.",
+      action: () => {
+        navigate("/session/68982a9d18ccd6fa406eaef4");
+      },
+    },
+    {
+      title: "Focus Booster",
+      desc: "Short session to sharpen your attention.",
+      author: "Arjun D.",
+      action: () => {
+        navigate("/session/68989a2d4e2f825427ae64dd");
+      },
+    },
+    {
+      title: "Stress Release",
+      desc: "Let go of tension and restore peace.",
+      author: "Aditya S.",
+      action: () => {
+        navigate("/session/68989c764e2f825427ae6525");
+      },
+    },
+  ];
   return (
     <Container sx={{ py: 6 }}>
       <Typography variant="h5" fontWeight="bold" gutterBottom>
