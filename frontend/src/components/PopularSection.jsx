@@ -43,9 +43,10 @@ export default function PopularSessions() {
       </Typography>
       <Grid container spacing={3}>
         {sessions.map((s, i) => (
-          <Grid item xs={12} sm={6} md={4} key={i}>
+          <Grid item xs={6} sm={6} md={4} key={i}>
             <Card
               sx={{
+                width:"100%",
                 "&:hover": {
                   boxShadow: 7,
                 },
