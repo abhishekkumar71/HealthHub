@@ -16,11 +16,11 @@ module.exports.register = async (req, res) => {
     await newuser.save();
     console.log(newuser);
     const token = createToken(newuser._id);
-   res.cookie("token", token, {
-  httpOnly: true,
-  secure: process.env.NODE_ENV === "production", 
-  sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax"
-});
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
+    });
     return res.json({
       message: "user registration successful!",
       success: true,
@@ -54,10 +54,10 @@ module.exports.login = async (req, res) => {
     }
     const token = createToken(user._id);
     res.cookie("token", token, {
-  httpOnly: true,
-  secure: process.env.NODE_ENV === "production", 
-  sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax"
-});
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
+    });
     return res.json({
       message: "Logged In successfully!",
       success: true,
@@ -76,7 +76,7 @@ module.exports.me = async (req, res) => {
     if (!user) {
       return res
         .status(404)
-        .json({ success: false,user, message: "User not found" });
+        .json({ success: false, user, message: "User not found" });
     }
 
     res.status(200).json({ success: true, user });
