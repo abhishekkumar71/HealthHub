@@ -26,9 +26,12 @@ const SessionDetails = () => {
       return;
 
     try {
-      await axios.delete(`https://healthhub-backend-sldu.onrender.com/delete/${session._id}`, {
-        withCredentials: true,
-      });
+      await axios.delete(
+        `https://healthhub-backend-sldu.onrender.com/delete/${session._id}`,
+        {
+          withCredentials: true,
+        }
+      );
       window.location.reload();
     } catch (error) {
       console.error("Failed to delete session:", error);
@@ -37,7 +40,9 @@ const SessionDetails = () => {
   useEffect(() => {
     const fetchSession = async () => {
       try {
-        const res = await axios.get(`https://healthhub-backend-sldu.onrender.com/session/${id}`);
+        const res = await axios.get(
+          `https://healthhub-backend-sldu.onrender.com/session/${id}`
+        );
         console.log(res);
         if (res.data.success) {
           setSession(res.data.session);
@@ -50,9 +55,12 @@ const SessionDetails = () => {
     };
     const fetchMe = async () => {
       try {
-        const res = await axios.get("https://healthhub-backend-sldu.onrender.com/me", {
-          withCredentials: true,
-        });
+        const res = await axios.get(
+          "https://healthhub-backend-sldu.onrender.com/me",
+          {
+            withCredentials: true,
+          }
+        );
         if (res.data.success) {
           setCurrentUsername(res.data.user.username);
         }
@@ -134,15 +142,12 @@ const SessionDetails = () => {
                 spacing={3}
                 direction={idx % 2 === 0 ? "row" : "row-reverse"}
                 alignItems="center"
-                sx={{ flexWrap: "nowrap" }}
+                sx={{
+                  flexWrap: { xs: "wrap", md: "nowrap" },
+                }}
               >
                 {step.media && (
-                  <Grid
-                    item
-                    xs={12}
-                    md={6}
-                    sx={{ width: "100%"}}
-                  >
+                  <Grid item xs={12} md={6} sx={{ width: "100%" }}>
                     {isVideo ? (
                       <Box
                         component="video"
