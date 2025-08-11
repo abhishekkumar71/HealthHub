@@ -15,33 +15,25 @@ export default function PopularSessions() {
       title: "Morning Meditation",
       desc: "Start your day with calm.",
       author: "Anjali R.",
-      action: () => {
-        navigate("/session/6897801705cd724f5bf89269");
-      },
+      id: "6897801705cd724f5bf89269",
     },
     {
       title: "Evening Reflections",
       desc: "Relax and rewind your thoughts.",
       author: "Ravi M.",
-      action: () => {
-        navigate("/session/68982a9d18ccd6fa406eaef4");
-      },
+      id: "68982a9d18ccd6fa406eaef4",
     },
     {
       title: "Focus Booster",
       desc: "Short session to sharpen your attention.",
       author: "Arjun D.",
-      action: () => {
-        navigate("/session/68989a2d4e2f825427ae64dd");
-      },
+      id: "68989a2d4e2f825427ae64dd",
     },
     {
       title: "Stress Release",
       desc: "Let go of tension and restore peace.",
       author: "Aditya S.",
-      action: () => {
-        navigate("/session/68989c764e2f825427ae6525");
-      },
+      id: "68989c764e2f825427ae6525",
     },
   ];
   return (
@@ -58,7 +50,9 @@ export default function PopularSessions() {
                   boxShadow: 7,
                 },
               }}
-              onClick={s.action}
+              onClick={() => {
+                navigate(`/session/${s.id}`);
+              }}
             >
               <CardContent>
                 <Typography variant="h6">{s.title}</Typography>
