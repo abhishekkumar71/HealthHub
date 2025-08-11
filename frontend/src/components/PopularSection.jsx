@@ -7,6 +7,8 @@ import {
   Button,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+const navigate = useNavigate();
+
 const sessions = [
   {
     title: "Morning Meditation",
@@ -51,7 +53,6 @@ const sessions = [
 ];
 
 export default function PopularSessions() {
-  const navigate = useNavigate();
   return (
     <Container sx={{ py: 6 }}>
       <Typography variant="h5" fontWeight="bold" gutterBottom>
