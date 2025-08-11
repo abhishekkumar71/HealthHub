@@ -5,7 +5,6 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
 const db_url = process.env.MONGO_URL;
-const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const userRoutes = require("./src/routes/userRouter");
 const uploadRoutes = require("./src/middlewares/upload");
