@@ -1,5 +1,6 @@
 # HealthHub
 HealthHub is a full-stack MERN web app where users can create, manage, and share wellness sessions.
+
 Features
 -  Authentication with JWT and secure HTTPOnly cookies
 -  Create, auto-save, and publish sessions
